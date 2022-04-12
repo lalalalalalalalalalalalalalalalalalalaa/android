@@ -3,11 +3,13 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
+import android.provider.ContactsContract;
 import android.widget.Button;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.database.Cursor;
+import android.widget.Toast;
 
 import java.text.DecimalFormat;
 import java.text.Format;
@@ -25,16 +27,17 @@ public class MainActivityForm extends AppCompatActivity {
     private SQLiteDatabase db;
     int sumRevenue = 0;
     int count;
+    //使用java的方法將今日日期抓出來
+    Calendar mCal = Calendar.getInstance();
+    String dateformat = "yyyyMMdd";
+    SimpleDateFormat df = new SimpleDateFormat(dateformat);
+    String today = df.format(mCal.getTime());
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main_form);
-
-        Calendar mCal = Calendar.getInstance();
-        String dateformat = "yyyyMMdd";
-        SimpleDateFormat df = new SimpleDateFormat(dateformat);
-        String today = df.format(mCal.getTime());
 
         totalRevenue = findViewById(R.id.totalRevenue);
         totalTable = findViewById(R.id.totaltable);
@@ -43,47 +46,52 @@ public class MainActivityForm extends AppCompatActivity {
         otherExpense = findViewById(R.id.otherExpense);
         calbutton = findViewById(R.id.calbutton);
         Income = findViewById(R.id.Income);
+        
+        //開啟資料庫，選擇今日的資料表
+        db = openOrCreateDatabase(  "'" + today + "'" + ".db", MODE_PRIVATE, null);
 
-        db = openOrCreateDatabase( today + ".db", MODE_PRIVATE, null);
 
-        Cursor cursor = db.rawQuery("SELECT * FROM RevenueDetail", null);
+        //宣告Cursor物件，將收入的資料取回來，並合計
+            Cursor cursor = db.query(false, "RevenueDetail", new String[]{
+                            "revenue"}, null, null, null,
+                    null, null, null);
 
-        while(cursor.moveToNext())
-        {
-            if (cursor != null && cursor.moveToFirst()){
-                int re = cursor.getInt(5);
-                sumRevenue += re;
+            if (cursor != null) {
+                while (cursor.moveToNext()) {
+                    int re = cursor.getInt(0);
+                    sumRevenue += re;
+                    count += 1;
+                }
 
             }
-        }
+            totalTable.setText(nf1.format(count));
+            totalRevenue.setText(nf1.format(sumRevenue));
 
-        count = cursor.getCount();
-
-        totalTable.setText(nf1.format(count));
-        totalRevenue.setText(nf1.format(sumRevenue));
+        關閉資料庫、關閉cusor物件
+        db.close();
+        cursor.close();
 
         calbutton.setOnClickListener(calbuttonOnClick);
 
     }
 
-
+    //設立按鈕傾聽，將淨利計算出來
     private View.OnClickListener calbuttonOnClick = new View.OnClickListener() {
         @Override
         public void onClick(View view) {
-            int income;
-            int x = Integer.parseInt(rawExpense.getText().toString());
-            int y = Integer.parseInt(salaryExpense.getText().toString());
-            int z = Integer.parseInt(otherExpense.getText().toString());
-            income = sumRevenue - x - y - z;
-            Income.setText(nf1.format(income));
+            if(sumRevenue > 0) {
+                int income;
+                int x = Integer.parseInt(rawExpense.getText().toString());
+                int y = Integer.parseInt(salaryExpense.getText().toString());
+                int z = Integer.parseInt(otherExpense.getText().toString());
+                income = sumRevenue - x - y - z;
+                Income.setText(nf1.format(income));
+            }else{
+                Toast.makeText(MainActivityForm.this, "尚未有任何收入", Toast.LENGTH_SHORT).show();
+            }
         }
     };
 
-    @Override
-    protected void onDestroy(){
-        super.onDestroy();
-        db.close();
-    }
 
 
 }
