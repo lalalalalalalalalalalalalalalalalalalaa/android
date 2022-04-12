@@ -2,7 +2,9 @@ package com.example.order_system;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.ContentValues;
 import android.content.Intent;
+import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.widget.AdapterView;
@@ -22,7 +24,8 @@ public class check_out extends AppCompatActivity {
     TextView chkMain, chkSecond, chkDessert, chkMoney;
     Spinner sprTable;
     private int TableNumber = 0;
-    String mydate = java.text.DateFormat.getDateTimeInstance().format(Calendar.getInstance().getTime());
+    String mydate = java.text.DateFormat.getDateTimeInstance().
+            format(Calendar.getInstance().getTime());
 
     String[] chkreceivedessert;
     String[] chkreceivemainMeal;
@@ -32,22 +35,19 @@ public class check_out extends AppCompatActivity {
 
     int tableNum;
 
+    Calendar mCal = Calendar.getInstance();
+    String dateformat = "yyyyMMdd";
+    SimpleDateFormat df = new SimpleDateFormat(dateformat);
+    String today = df.format(mCal.getTime());
 
-    private final static String CREATE_TABLE = "CREATE TABLE RevenueDetail" +
-            "(_id INTEGER PRIMARY KEY, tablenum INTEGER, mainMeal TEXT, secondMeal TEXT, dessert TEXT, revenue INTEGER, date DATETIME)";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_check_out);
 
-        Calendar mCal = Calendar.getInstance();
-        String dateformat = "yyyyMMdd";
-        SimpleDateFormat df = new SimpleDateFormat(dateformat);
-        String today = df.format(mCal.getTime());
 
 
-        db = openOrCreateDatabase(today + ".db", MODE_PRIVATE, null);
 
         Bundle bundle = this.getIntent().getExtras();
         chkreceivedessert = bundle.getStringArray("dessert");
@@ -188,7 +188,6 @@ public class check_out extends AppCompatActivity {
                     chkDessert.setText(chkreceivedessert[9]);
                     chkSecond.setText(chkreceivesecondMeal[9]);
                     chkMoney.setText(Integer.toString(chkreceivetotal[9]));
-
                     break;
 
             }
@@ -203,28 +202,39 @@ public class check_out extends AppCompatActivity {
     private View.OnClickListener chkbtnOKOnClick = new View.OnClickListener() {
         @Override
         public void onClick(View view) {
+
+            db = openOrCreateDatabase(  "'" + today + "'" + ".db", MODE_PRIVATE, null);
+
+            ContentValues newRow = new ContentValues();
+            newRow.put("tablenumber", tableNum);
+            newRow.put("mainMeal", chkMain.getText().toString());
+            newRow.put("secondMeal", chkSecond.getText().toString());
+            newRow.put("dessert", chkDessert.getText().toString());
+            newRow.put("revenue", Integer.parseInt(chkMoney.getText().toString()));
+            newRow.put("date", mydate);
+
+
             if (chkMain.getText().equals("無")){
                 Toast.makeText(getApplicationContext(), getString(R.string.ToastUnOrder), Toast.LENGTH_SHORT).show();
             }else {
 
-                try {
-                    db.execSQL(CREATE_TABLE);
-                    db.execSQL("INSERT INTO RevenueDetail (tablenum,mainMeal,secondMeal,dessert,revenue,date) values (" +
-                            tableNum + ",'" + chkMain.getText().toString()
-                            + "','" + chkSecond.getText() + "','" + chkDessert.getText()
-                            + "'," + Integer.parseInt(chkMoney.getText().toString()) + ",'" + mydate + "')");
-                } catch (Exception e) {
-                }
+                db.insert( "RevenueDetail" , null, newRow);
 
                 chkreceivemainMeal[tableNum - 1] = "無";
                 chkreceivetotal[tableNum - 1] = 0;
                 chkreceivesecondMeal[tableNum - 1] = "無";
                 chkreceivedessert[tableNum - 1] = "無";
+                chkMain.setText("無");
+                chkSecond.setText("無");
+                chkDessert.setText("無");
+                chkMoney.setText("0");
 
                 Toast.makeText(check_out.this, getString(R.string.ToastSucess), Toast.LENGTH_SHORT).show();
 
-
             }
+
+            db.close();
+
         }
     };
 
@@ -242,11 +252,5 @@ public class check_out extends AppCompatActivity {
         startActivity(returnInform);
     }
 
-    @Override
-    protected void onDestroy(){
-        super.onDestroy();
-        db.close();
-    }
 
 }
-
