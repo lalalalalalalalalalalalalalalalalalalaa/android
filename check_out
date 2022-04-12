@@ -48,7 +48,7 @@ public class check_out extends AppCompatActivity {
 
 
 
-
+        //接收已點餐的資訊
         Bundle bundle = this.getIntent().getExtras();
         chkreceivedessert = bundle.getStringArray("dessert");
         chkreceivemainMeal = bundle.getStringArray("mainMeal");
@@ -74,7 +74,7 @@ public class check_out extends AppCompatActivity {
     private AdapterView.OnItemSelectedListener sprTableOnItemSelected = new AdapterView.OnItemSelectedListener() {
         @Override
         public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
-
+            //設定桌次選擇，當選擇時先將內容清空，已點餐的值放入
             switch (i){
                 case 0:
                     tableNum = 1;
@@ -202,9 +202,9 @@ public class check_out extends AppCompatActivity {
     private View.OnClickListener chkbtnOKOnClick = new View.OnClickListener() {
         @Override
         public void onClick(View view) {
-
+            
             db = openOrCreateDatabase(  "'" + today + "'" + ".db", MODE_PRIVATE, null);
-
+            //將要回傳的資料打包
             ContentValues newRow = new ContentValues();
             newRow.put("tablenumber", tableNum);
             newRow.put("mainMeal", chkMain.getText().toString());
@@ -213,11 +213,11 @@ public class check_out extends AppCompatActivity {
             newRow.put("revenue", Integer.parseInt(chkMoney.getText().toString()));
             newRow.put("date", mydate);
 
-
+            //如果桌次沒有點餐，設定顯示未點餐
             if (chkMain.getText().equals("無")){
                 Toast.makeText(getApplicationContext(), getString(R.string.ToastUnOrder), Toast.LENGTH_SHORT).show();
             }else {
-
+                //將資料回傳
                 db.insert( "RevenueDetail" , null, newRow);
 
                 chkreceivemainMeal[tableNum - 1] = "無";
@@ -237,7 +237,7 @@ public class check_out extends AppCompatActivity {
 
         }
     };
-
+    //在activity要轉換到下一個時，原本的會先進入onPause()切換過去之後，才會onStop()，在onDestroy()，利用這一點，我將要回傳的資料放在OnPause
     @Override
     protected void onPause() {
         super.onPause();
