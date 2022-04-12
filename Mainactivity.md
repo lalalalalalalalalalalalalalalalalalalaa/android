@@ -36,46 +36,48 @@ public class MainActivity extends AppCompatActivity {
 
     private int count = 0;
     private int sumRevenue = 0;
-
+    //設立空的陣列存放已點餐桌次的資料
     public String[]b;
     public String[]c;
     public String[]d;
     public int[]e;
-
+    //宣告SQLOpenHelper
     private FriendDbOpenHelper mFriendDbOpenHelper;
+    //設定今天日期為資料庫名稱
     private static final String DB_FILE =  "'" + new SimpleDateFormat("yyyyMMdd").format(Calendar.getInstance().getTime()) + "'" + ".db", DB_TABLE = "RevenueDetail";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
+        //建立SQLOpenHelper物件
         mFriendDbOpenHelper = new FriendDbOpenHelper(getApplicationContext(),
                 DB_FILE, null, 1);
-
+        //取得更改權限
         SQLiteDatabase friendDb = mFriendDbOpenHelper.getWritableDatabase();
 
-
+        //建立資料表
         Cursor cursor = friendDb.rawQuery("select DISTINCT tbl_name from " +
                 "sqlite_master where tbl_name = '" + DB_TABLE + "'", null);
-
+        //建立資料表欄位
         if (cursor != null) {
             if (cursor.getCount() == 0) {
                 friendDb.execSQL(" CREATE TABLE '" + DB_TABLE +
                         "'(_id INTEGER PRIMARY KEY," + "tablenumber INTEGER NOT NULL," + "mainMeal TEXT, secondMeal TEXT, dessert TEXT, revenue INTEGER, date DATETIME);");
             }
+            //關閉資料表以及cursor
             cursor.close();
         }
 
         friendDb.close();
 
 
-
+        //設定總共10桌的點餐資料初始值
         b = new String[]{"無", "無", "無", "無", "無", "無", "無", "無", "無", "無"};
         c = new String[]{"無", "無", "無", "無", "無", "無", "無", "無", "無", "無"};
         d = new String[]{"無", "無", "無", "無", "無", "無", "無", "無", "無", "無"};
         e = new int[]{0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
-
+        //因為剛開啟時，會沒有check_out回傳的資料，這邊設立try catch 使其不會錯誤無法執行
         try{
             Bundle Main = this.getIntent().getExtras();
             d = Main.getStringArray("sendChkDessert");
@@ -91,7 +93,7 @@ public class MainActivity extends AppCompatActivity {
         numPicker = findViewById(R.id.numPicker);
         rdgDessert = findViewById(R.id.rdgDessert);
         sprMain = findViewById(R.id.sprMain);
-
+        //設定版面屬性
         numPicker.setMinValue(1);
         numPicker.setMaxValue(10);
         numPicker.setValue(1);
@@ -105,10 +107,6 @@ public class MainActivity extends AppCompatActivity {
 
         btn_mainChange.setOnClickListener(mainChangeOnClick);
         btnOK.setOnClickListener(btnOKClick);
-
-
-
-
 
     }
 
@@ -221,6 +219,7 @@ public class MainActivity extends AppCompatActivity {
             mdlg_confirm.dismiss();
             count += 1;
             sumRevenue += total;
+            //設定已點餐要先結帳才能在點餐
             if (b[table-1].equals("無")){
                 b[table-1] = mainMeal;
                 c[table-1] = secondMeal;
@@ -248,6 +247,7 @@ public class MainActivity extends AppCompatActivity {
     private View.OnClickListener mainChangeOnClick = new View.OnClickListener() {
         @Override
         public void onClick(View view) {
+            //設定選單屬性
             mdlg_mainChange= new Dialog(MainActivity.this);
             mdlg_mainChange.setCancelable(true);
             mdlg_mainChange.requestWindowFeature(android.R.drawable.ic_dialog_info);
@@ -272,12 +272,14 @@ public class MainActivity extends AppCompatActivity {
 
     private View.OnClickListener mainItemOnClick = new View.OnClickListener() {
         @Override
+        //設定選單按鈕，可以切換至結帳、表單兩個畫面
         public void onClick(View view) {
             switch (view.getId()){
                 case(R.id.returnOrder):
                     mdlg_mainChange.dismiss();
                     break;
-                case(R.id.dlg_checkout):
+                //將點餐資料帶到結帳頁面
+                case(R.id.dlg_checkout):                   
                     mdlg_mainChange.dismiss();
                     Intent chk = new Intent();
                     chk.setClass(MainActivity.this, check_out.class);
