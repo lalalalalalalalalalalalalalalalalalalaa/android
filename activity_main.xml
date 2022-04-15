@@ -12,7 +12,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/txtTable"
-        android:textSize="16sp"
+        android:textSize="25sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintHorizontal_bias="0.07"
         app:layout_constraintLeft_toLeftOf="parent"
@@ -22,7 +22,7 @@
 
     <NumberPicker
         android:id="@+id/numPicker"
-        android:layout_width="46dp"
+        android:layout_width="60dp"
         android:layout_height="120dp"
         app:layout_constraintEnd_toEndOf="@+id/textView"
         app:layout_constraintHorizontal_bias="0.0"
@@ -34,7 +34,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/txtMain"
-        android:textSize="16sp"
+        android:textSize="25sp"
         app:layout_constraintEnd_toEndOf="@+id/numPicker"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="@+id/numPicker"
@@ -46,6 +46,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
         android:entries="@array/sprMain"
+
         app:layout_constraintEnd_toEndOf="@+id/textView2"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="@+id/textView2"
@@ -57,7 +58,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
         android:text="@string/txtSecond"
-        android:textSize="16sp"
+        android:textSize="25sp"
         app:layout_constraintEnd_toEndOf="@+id/sprMain"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="@+id/sprMain"
@@ -68,7 +69,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/chkShrimp"
-        android:textSize="14sp"
+        android:textSize="20sp"
         app:layout_constraintEnd_toEndOf="@+id/textView3"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="@+id/textView3"
@@ -79,7 +80,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/chkTofu"
-        android:textSize="14sp"
+        android:textSize="20sp"
         app:layout_constraintEnd_toEndOf="@+id/chkShrimp"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="@+id/chkShrimp"
@@ -92,7 +93,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
         android:text="@string/txtDessert"
-        android:textSize="16sp"
+        android:textSize="20sp"
         app:layout_constraintEnd_toEndOf="@+id/chkTofu"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="@+id/chkTofu"
@@ -114,14 +115,14 @@
             android:layout_height="wrap_content"
             android:checked="true"
             android:text="@string/rdbIceCream"
-            android:textSize="14sp" />
+            android:textSize="20sp" />
 
         <RadioButton
             android:id="@+id/rdbJelly"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/rdbJelly"
-            android:textSize="14sp" />
+            android:textSize="20sp" />
     </RadioGroup>
 
     <Button
@@ -131,7 +132,7 @@
         android:backgroundTint="@color/blue"
         android:text="@string/btnOK"
         android:textColor="@color/white"
-        android:textSize="16sp"
+        android:textSize="20sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.498"
@@ -157,6 +158,7 @@
         android:layout_height="wrap_content"
         android:text="@string/mainChange"
         android:textColor="@color/white"
+        android:textSize="20sp"
         android:background="@color/blue"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
