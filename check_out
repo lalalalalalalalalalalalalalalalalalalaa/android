@@ -48,12 +48,11 @@ public class check_out extends AppCompatActivity {
 
 
 
-        //接收已點餐的資訊
-        Bundle bundle = this.getIntent().getExtras();
-        chkreceivedessert = bundle.getStringArray("dessert");
-        chkreceivemainMeal = bundle.getStringArray("mainMeal");
-        chkreceivesecondMeal = bundle.getStringArray("secondMeal");
-        chkreceivetotal = bundle.getIntArray("total");
+        Bundle intent1 = getIntent().getExtras();
+        chkreceivedessert = intent1.getStringArray("dessert");
+        chkreceivemainMeal = intent1.getStringArray("mainMeal");
+        chkreceivesecondMeal = intent1.getStringArray("secondMeal");
+        chkreceivetotal = intent1.getIntArray("total");
 
         sprTable = findViewById(R.id.sprTable);
         chkMain = findViewById(R.id.chkMain);
@@ -237,19 +236,18 @@ public class check_out extends AppCompatActivity {
 
         }
     };
-    //在activity要轉換到下一個時，原本的會先進入onPause()切換過去之後，才會onStop()，在onDestroy()，利用這一點，我將要回傳的資料放在OnPause
     @Override
-    protected void onPause() {
-        super.onPause();
-        Intent returnInform = new Intent();
+    public void onBackPressed() {
+        //super.onBackPressed();
         Bundle chkSendBack = new Bundle();
-        returnInform.setClass(check_out.this, MainActivity.class);
+        Intent returnInform = new Intent();
         chkSendBack.putStringArray("sendChkMainMeal", chkreceivemainMeal);
         chkSendBack.putStringArray("sendChkSecondMeal", chkreceivesecondMeal);
         chkSendBack.putStringArray("sendChkDessert", chkreceivedessert);
         chkSendBack.putIntArray("sendChkTotal", chkreceivetotal);
         returnInform.putExtras(chkSendBack);
-        startActivity(returnInform);
+        setResult(RESULT_OK, returnInform);
+        finish();
     }
 
 
