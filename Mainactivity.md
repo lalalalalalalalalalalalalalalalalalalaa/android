@@ -77,15 +77,6 @@ public class MainActivity extends AppCompatActivity {
         c = new String[]{"無", "無", "無", "無", "無", "無", "無", "無", "無", "無"};
         d = new String[]{"無", "無", "無", "無", "無", "無", "無", "無", "無", "無"};
         e = new int[]{0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
-        //因為剛開啟時，會沒有check_out回傳的資料，這邊設立try catch 使其不會錯誤無法執行
-        try{
-            Bundle Main = this.getIntent().getExtras();
-            d = Main.getStringArray("sendChkDessert");
-            b = Main.getStringArray("sendChkMainMeal");
-            c = Main.getStringArray("sendChkSecondMeal");
-            e = Main.getIntArray("sendChkTotal");
-        }catch (Exception e){
-        }
 
         btnOK = findViewById(R.id.btnOK);
         chkShrimp = findViewById(R.id.chkShrimp);
@@ -281,15 +272,15 @@ public class MainActivity extends AppCompatActivity {
                 //將點餐資料帶到結帳頁面
                 case(R.id.dlg_checkout):                   
                     mdlg_mainChange.dismiss();
+                    Bundle chksent = new Bundle();
                     Intent chk = new Intent();
                     chk.setClass(MainActivity.this, check_out.class);
-                    Bundle bundle = new Bundle();
-                    bundle.putStringArray("mainMeal", b);
-                    bundle.putStringArray("secondMeal", c);
-                    bundle.putStringArray("dessert", d);
-                    bundle.putIntArray("total", e);
-                    chk.putExtras(bundle);
-                    startActivity(chk);
+                    chksent.putIntArray("total", e);
+                    chksent.putStringArray("mainMeal", b);
+                    chksent.putStringArray("secondMeal", c);
+                    chksent.putStringArray("dessert", d);
+                    chk.putExtras(chksent);
+                    startActivityForResult(chk, 1);
                     break;
                 case(R.id.dlg_end):
                     mdlg_mainChange.dismiss();
@@ -305,6 +296,21 @@ public class MainActivity extends AppCompatActivity {
         }
     };
 
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        switch (requestCode){
+            case 1:
+                if (resultCode == RESULT_OK){
+                    Bundle bundle = data.getExtras();
+                    d = bundle.getStringArray("sendChkDessert");
+                    b = bundle.getStringArray("sendChkMainMeal");
+                    c = bundle.getStringArray("sendChkSecondMeal");
+                    e = bundle.getIntArray("sendChkTotal");
+                }
+                break;
+        }
+    }
 
 
 
